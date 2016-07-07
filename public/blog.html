@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Blog Project</title>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link href='https://fonts.googleapis.com/css?family=Lora' rel='stylesheet' type='text/css'>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+        <!-- <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+        <script>tinymce.init({ selector:'textarea' });</script> -->
+        <script>
+            angular.module('blogApp', []);
+            angular.module('blogApp').controller('blogCtrl', function($scope, $http){
+                $scope.blogPost ={};
+                $scope.sendPost = function() {
+                    console.log('sendPost called');
+                    $http.post('/blogPosts', $scope.blogPost).then(function(){
+                        console.log('sendPost Async');
+                        getPosts();
+                    });
+                }
+                function getPosts() {
+                    console.log('getPosts called');
+                    $http.get('/blogPosts').then(function(response) {
+                        console.log('getPosts Async');
+                        $scope.posts = response.data;
+                        $scope.blogPost = {};
+                    });
+                }
+                // function filterPosts() {
+                //     console.log('filterPosts called');
+                //     $http.filter('/blogPosts').then(function($scope, $http, $filter){
+                //         console.log('filterPosts Async');
+                //         getPosts();
+                //     });
+                // }
+                getPosts();
+            });
+        </script>
+    </head>
+    <body ng-app="blogApp" >
+        <div class="container" ng-controller="blogCtrl">
+            <div class="jumbotron jumbotron-fluid">
+                <div class="container">
+                    <h1 class="display-3">OKCoders Blog Project</h1>
+                    <p class="lead">A Diana Varnes Production</p>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Create Post</div>
+                    <div class="panel-body">
+                        <form>
+                            <fieldset class="form-group">
+                                <label for"blogBodyInput">Title: </label>
+                                <input type="text" class="form-control" id="blogPostTitle" ng-model="blogPost.title">
+                            </fieldset>
+                            <fieldset class="form-group">
+                                <label for="blogBodyInput">Blog Body: </label>
+                                <textarea class="form-control" id="blogPostBody" rows="5" ng-model="blogPost.body"></textarea>
+                            </fieldset>
+                            <input class="btn btn-success" type="submit" value="Post" ng-click="sendPost()" ng-disabled="!blogPost.title || !blogPost.body">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="panel panel-success">
+                    <div class="panel-heading">Blog Posts</div>
+                        <div class="panel-body" ng-repeat="post in posts.slice().reverse()">
+                            <h3>{{post.title}}</h3>
+                            <br />
+                            <p>{{post.body}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
