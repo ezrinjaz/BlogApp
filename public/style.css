@@ -26,4 +26,5 @@ h3 {
 
 p {
     font-family: 'Lora', serif;
+    white-space: pre-line;
 }
